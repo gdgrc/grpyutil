@@ -7,7 +7,7 @@ find_packages_list = find_packages()
 print(find_packages_list)
 setup(
     name="grpyutil",
-    version="0.10",
+    version="0.11",
     description="utils module",
     author="ZJ",
     # url="",
@@ -15,10 +15,3 @@ setup(
     packages=find_packages_list,
     # scripts=[" scripts/test.py "],
 )
-
-
-import sys
-
-
-def get():
-    return sys.path
