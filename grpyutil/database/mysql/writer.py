@@ -70,7 +70,10 @@ class DataWriter(object):
 
             ret = self.tc.executemany(sql, self.cache_write_data_list)
 
-            print(self.tc.get_sql_path())
+            self.tc.commit()
+
+            # print(self.tc.get_sql_path())
+            #print(sql, self.cache_write_data_list)
 
             self.total_write_num = self.total_write_num + cache_length
 
