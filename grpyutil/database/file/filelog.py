@@ -13,11 +13,17 @@ class Logging(object):
         self.DEBUG = offical_logging.DEBUG
         self.NOTSET = offical_logging.NOTSET
 
+    def debug(self, msg, *args, **kwargs):
+        offical_logging.debug(msg, *args, **kwargs)
+        # print(args)
+        # print(kwargs)
+        # print(msg % args)
+
     def info(self, msg, *args, **kwargs):
         offical_logging.info(msg, *args, **kwargs)
 
     def error(self, msg, *args, **kwargs):
-        offical_logging.info(msg, *args, **kwargs)
+        offical_logging.error(msg, *args, **kwargs)
 
     def basicConfig(self, **kwargs):
         offical_logging.basicConfig(**kwargs)

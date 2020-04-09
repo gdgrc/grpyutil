@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 find_packages_list = find_packages()
 
-print(find_packages_list)
+
 setup(
     name="grpyutil",
     version="0.11",
