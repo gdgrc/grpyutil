@@ -4,10 +4,10 @@ from setuptools import setup, find_packages
 
 find_packages_list = find_packages()
 
-
+print(find_packages_list)
 setup(
     name="grpyutil",
-    version="0.13",
+    version="0.14",
     description="utils module",
     author="ZJ",
     # url="",
