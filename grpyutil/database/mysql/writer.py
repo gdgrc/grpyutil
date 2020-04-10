@@ -54,7 +54,7 @@ class DataWriter(object):
 
         cache_length = len(self.cache_write_data_list)
 
-        if force or cache_length > self.write_linenum:
+        if force or cache_length >= self.write_linenum:
 
             sql = "insert into %s (" % self.tc.get_table_name()
             for field in self.cache_write_field_list:
@@ -78,6 +78,8 @@ class DataWriter(object):
             self.total_write_num = self.total_write_num + cache_length
 
             self.cache_write_data_list.clear()
+
+            logging.info("Finishing inserting data num: %d" % cache_length)
 
         return ret
 

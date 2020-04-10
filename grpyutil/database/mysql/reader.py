@@ -99,7 +99,7 @@ class DataReader(object):
 
             id_value = last_record[id_column_index]
 
-            self.read_id_index = int(id_value) + 1
+            self.read_id_index = id_value  # int(id_value) + 1
 
             self.read_index = 0
 

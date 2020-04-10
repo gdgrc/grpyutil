@@ -62,7 +62,7 @@ class DbConn(object):
         cursor = self.db_conn.cursor()
 
         ret = cursor.executemany(query, args)
-        print(query, args, ret)
+
         cursor.close()
 
         return ret
@@ -335,7 +335,7 @@ class TableConn(object):
 
         return self.db_conn_object.executemany(query, args)
 
-    def read_data(self, read_linenum=0, begin_index=0, begin_id_index=0, begin_id_index_name=""):
+    def read_data(self, read_linenum=0, begin_index=0, begin_id_index=None, begin_id_index_name=""):
 
         self.db_conn_object.check_and_fix()
 
@@ -345,10 +345,14 @@ class TableConn(object):
         sql = ""
         try:
             sql = "SELECT %s FROM `%s` " % (','.join("`%s`" % item for item in self._filter_fields), self.table_name)
+            args_list = []
 
             # id begin may be faster
-            if begin_id_index_name:
-                sql += " WHERE `%s`>= %d " % (begin_id_index_name, begin_id_index)
+            if begin_id_index_name and begin_id_index:
+                sql += " WHERE `%s`> " % (begin_id_index_name)
+                sql += " %s "
+
+                args_list.append(begin_id_index)
 
             # limit begin
             if read_linenum > 0:
@@ -359,7 +363,7 @@ class TableConn(object):
 
                 sql += " %d" % (read_linenum)
 
-            rows, rows_length = self.db_conn_object.query(sql)
+            rows, rows_length = self.db_conn_object.query(sql, args_list)
 
             """
             # i do not think we should travel
