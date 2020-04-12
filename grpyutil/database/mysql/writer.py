@@ -38,12 +38,20 @@ class DataWriter(object):
 
         self.cache_write_field_list = []
 
+        self.cache_write_on_dup_field_list = []
+
         #
         self.total_write_num = 0
 
     def set_write_fields(self, field_list):
 
         self.cache_write_field_list = field_list
+
+        self.cache_write_on_dup_field_list = field_list
+
+    def set_on_dup_fields(self, field_list):
+
+        self.cache_write_on_dup_field_list = field_list
 
     def write_rows(self, value_list, force=False):
 
@@ -54,7 +62,7 @@ class DataWriter(object):
 
         cache_length = len(self.cache_write_data_list)
 
-        if force or cache_length >= self.write_linenum:
+        if cache_length > 0 and (force or cache_length >= self.write_linenum):
 
             sql = "insert into %s (" % self.tc.get_table_name()
             for field in self.cache_write_field_list:
@@ -66,7 +74,12 @@ class DataWriter(object):
                 sql += "%s,"
 
             sql = sql[:-1]
-            sql = sql + ")"
+            sql = sql + ") ON DUPLICATE KEY UPDATE "
+
+            for field in self.cache_write_on_dup_field_list:
+                sql += "`%s`=VALUES(`%s`)," % (field, field)
+
+            sql = sql[:-1]
 
             ret = self.tc.executemany(sql, self.cache_write_data_list)
 
