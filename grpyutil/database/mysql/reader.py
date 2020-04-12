@@ -4,19 +4,24 @@ from grpyutil.database.file import logging
 
 
 class DataReader(object):
-    def __init__(self, begin_index, begin_id_index, sql_path, finish_flag, end_read_num, begin_id_index_name, read_linenum=30000):
+    def __init__(self, begin_index, begin_id_index, sql_path, finish_flag, end_read_num, begin_id_index_name, dc=None, table_name=None, read_linenum=30000):
         self.begin_index = begin_index
         self.begin_id_index = begin_id_index
         self.begin_id_index_name = begin_id_index_name
 
-        self.sql_path = sql_path
         self.finish_flag = finish_flag
         self.end_read_num = end_read_num
         self.type = 0
 
-        self.dc = mysql.get_db_conn(sql_path)
-        table_name = self.dc.sql_config["table"]
-        self.tc = mysql.TableConn(self.dc, table_name)
+        if sql_path:
+            self.sql_path = sql_path
+            self.dc = mysql.get_db_conn(sql_path)
+            table_name = self.dc.sql_config["table"]
+            self.tc = mysql.TableConn(self.dc, table_name)
+        else:
+            self.dc = dc
+
+            self.tc = mysql.TableConn(self.dc, table_name)
 
         self.read_linenum = read_linenum
 
@@ -77,12 +82,12 @@ class DataReader(object):
                                                          begin_index=self.read_index, begin_id_index=self.read_id_index,
                                                          begin_id_index_name=self.begin_id_index_name)
 
-        logging.info("Read Data from %s, ReadIndex: %d, ReadIdIndex: %d , ReadIdIndexName: %s,ReadLineNum: %d, RowsAffected: %d" % (self.tc.table_name,
-                                                                                                                                    self.read_index,
-                                                                                                                                    self.read_id_index,
-                                                                                                                                    self.begin_id_index_name,
-                                                                                                                                    read_linenum,
-                                                                                                                                    rows_affected))
+        logging.info("Read Data from %s, ReadIndex: %d, ReadIdIndex: %s , ReadIdIndexName: %s, ReadLineNum: %s, RowsAffected: %s" % (self.tc.table_name,
+                                                                                                                                     self.read_index,
+                                                                                                                                     self.read_id_index,
+                                                                                                                                     self.begin_id_index_name,
+                                                                                                                                     read_linenum,
+                                                                                                                                     rows_affected))
 
         # no more data
         if rows_affected == 0:

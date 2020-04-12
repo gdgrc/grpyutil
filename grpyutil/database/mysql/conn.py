@@ -147,7 +147,7 @@ class DbConn(object):
 class TableConn(object):
     def __init__(self, db_conn_object, table_name):
         if not db_conn_object or not table_name:
-            msg = "mysql_read_data fail!!  db_conn_object and table must exist both!"
+            msg = "mysql_read_data fail!!  db_conn_object and table must exist both! table: %s" % (table_name)
             raise Exception(msg)
 
         self.db_conn_object = db_conn_object
@@ -363,6 +363,7 @@ class TableConn(object):
 
                 sql += " %d" % (read_linenum)
 
+            # print(sql, args_list)
             rows, rows_length = self.db_conn_object.query(sql, args_list)
 
             """
