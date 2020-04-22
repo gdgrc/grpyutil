@@ -335,7 +335,7 @@ class TableConn(object):
 
         return self.db_conn_object.executemany(query, args)
 
-    def read_data(self, read_linenum=0, begin_index=0, begin_id_index=None, begin_id_index_name=""):
+    def read_data(self, read_linenum=0, begin_index=0, begin_id_index=None, begin_id_index_name="", dict_query=False):
 
         self.db_conn_object.check_and_fix()
 
@@ -364,7 +364,12 @@ class TableConn(object):
                 sql += " %d" % (read_linenum)
 
             # print(sql, args_list)
-            rows, rows_length = self.db_conn_object.query(sql, args_list)
+            rows = None
+            rows_length = None
+            if dict_query:
+                rows, rows_length = self.db_conn_object.dict_query(sql, args_list)
+            else:
+                rows, rows_length = self.db_conn_object.query(sql, args_list)
 
             """
             # i do not think we should travel

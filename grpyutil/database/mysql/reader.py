@@ -62,7 +62,7 @@ class DataReader(object):
         return "%d %s %s %s %s %s\n" % (self.finish_flag,
                                         self.sql_path, self.begin_index, self.begin_id_index, self.end_read_num, self.type)
 
-    def get_next_rows(self):
+    def get_next_rows(self, dict_query=False):
         # begin to read data
 
         if self.end_read_num and self.total_read_num >= self.end_read_num:
@@ -80,7 +80,7 @@ class DataReader(object):
 
             data_list, rows_affected = self.tc.read_data(read_linenum=read_linenum,
                                                          begin_index=self.read_index, begin_id_index=self.read_id_index,
-                                                         begin_id_index_name=self.begin_id_index_name)
+                                                         begin_id_index_name=self.begin_id_index_name, dict_query=dict_query)
 
         logging.info("Read Data from %s, ReadIndex: %d, ReadIdIndex: %s , ReadIdIndexName: %s, ReadLineNum: %s, RowsAffected: %s" % (self.tc.table_name,
                                                                                                                                      self.read_index,
@@ -96,13 +96,19 @@ class DataReader(object):
 
         if self.begin_id_index_name:
 
-            id_column_index = self.get_index_by_field_name(self.begin_id_index_name)
+            id_value = None
 
-            last_record = data_list[rows_affected - 1]
+            if not dict_query:
 
-            # print(column_list, self.begin_id_name, id_column_index, last_record)
+                id_column_index = self.get_index_by_field_name(self.begin_id_index_name)
 
-            id_value = last_record[id_column_index]
+                last_record = data_list[rows_affected - 1]
+
+                id_value = last_record[id_column_index]
+
+            else:
+
+                id_value = data_list[rows_affected - 1][self.begin_id_index_name]
 
             self.read_id_index = id_value  # int(id_value) + 1
 
