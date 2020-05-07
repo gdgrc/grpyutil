@@ -88,9 +88,29 @@ class DataWriter(object):
 
             sql = sql[:-1]
 
-            ret = self.tc.executemany(sql, self.cache_write_data_list)
+            # try to retry the transaction
 
-            self.tc.commit()
+            try_times = 10
+            while(True):
+
+                try:
+
+                    ret = self.tc.executemany(sql, self.cache_write_data_list)
+
+                    self.tc.commit()
+
+                    break
+
+                except Exception as e:
+                    if "Deadlock found" in str(e):
+
+                        time.sleep(2)
+                        if try_times > 0:
+                            try_times = try_times - 1
+                        else:
+                            raise Exception("retry %d times,but did not pass,err: %s" % (try_times, e))
+                    else:
+                        raise e
 
             # print(self.tc.get_sql_path())
             #print(sql, self.cache_write_data_list)
