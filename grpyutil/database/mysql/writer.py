@@ -103,7 +103,7 @@ class DataWriter(object):
                     break
 
                 except Exception as e:
-                    if "Deadlock found" in str(e):
+                    if "try restarting transaction" in str(e):
 
                         time.sleep(2)
                         if try_times > 0:
