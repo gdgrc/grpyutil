@@ -95,6 +95,20 @@ class DbConn(object):
         cursor.close()
         return ret
 
+    def query_columns(self, query, args=None):
+        cursor = self.db_conn.cursor()
+        rows_length = cursor.execute(query, args)
+        description = cursor.description
+
+        columns = []
+
+        for d in description:
+            columns.append(d[0])
+
+        cursor.close()
+
+        return columns
+
     def close(self):
         return self.db_conn.close()
 
@@ -304,12 +318,12 @@ class TableConn(object):
 
         return (rows[0][1]).upper()
 
-    def set_filter_fields(self, target_fields):
+    def set_filter_fields(self, target_fields, force=False):
 
         filter_fields = []
 
         for item in target_fields:
-            if item in self._fields_list:
+            if item in self._fields_list or force:
                 filter_fields.append(item)
 
         self._filter_fields = filter_fields
@@ -335,7 +349,27 @@ class TableConn(object):
 
         return self.db_conn_object.executemany(query, args)
 
-    def read_data(self, read_linenum=0, begin_index=0, begin_id_index=None, begin_id_index_name="", dict_query=False):
+    def read_data_columns(self):
+
+        self.db_conn_object.check_and_fix()
+
+        if not self._filter_fields:
+            raise Exception("no filter fields")
+
+        # print(self._filter_fields)
+
+        sql = ""
+        try:
+            sql = "SELECT %s FROM `%s` " % (','.join("%s" % item for item in self._filter_fields), self.table_name)
+            args_list = []
+
+            sql += " LIMIT 1"
+
+            return self.db_conn_object.query_columns(sql, args_list)
+        except Exception as e:
+            raise Exception("sql execute error: %s, sql: %s" % (e, sql))
+
+    def read_data(self, read_linenum=0, begin_index=0, begin_id_index=None, begin_id_index_name="", dict_query=False, extra_sql=""):
 
         self.db_conn_object.check_and_fix()
 
@@ -344,7 +378,7 @@ class TableConn(object):
 
         sql = ""
         try:
-            sql = "SELECT %s FROM `%s` " % (','.join("`%s`" % item for item in self._filter_fields), self.table_name)
+            sql = "SELECT %s FROM `%s` " % (','.join("%s" % item for item in self._filter_fields), self.table_name)
             args_list = []
 
             # id begin may be faster
@@ -353,6 +387,12 @@ class TableConn(object):
                 sql += " %s "
 
                 args_list.append(begin_id_index)
+
+            if extra_sql:
+                if "WHERE" in sql:
+                    sql += (" AND " + extra_sql)
+                else:
+                    sql += extra_sql
 
             # limit begin
             if read_linenum > 0:

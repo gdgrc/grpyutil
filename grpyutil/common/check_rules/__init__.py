@@ -4,6 +4,7 @@ from .cell_phone import *
 from .name import *
 from .email import *
 from .ip import *
+from .time import *
 import sys
 
 

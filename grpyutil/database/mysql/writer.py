@@ -41,6 +41,8 @@ class DataWriter(object):
         self.cache_write_on_dup_field_list = []
 
         #
+        self.ignore = False
+
         self.total_write_num = 0
 
     def set_write_fields(self, field_list):
@@ -53,6 +55,9 @@ class DataWriter(object):
 
         self.cache_write_on_dup_field_list = field_list
 
+    def set_ignore(self, b):
+        self.ignore = b
+
     def write_rows(self, value_list, force=False):
 
         if value_list:
@@ -63,8 +68,10 @@ class DataWriter(object):
         cache_length = len(self.cache_write_data_list)
 
         if cache_length > 0 and (force or cache_length >= self.write_linenum):
-
-            sql = "insert into %s (" % self.tc.get_table_name()
+            sql = "insert "
+            if self.ignore:
+                sql += " ignore "
+            sql += " into %s (" % self.tc.get_table_name()
             for field in self.cache_write_field_list:
                 sql += "`%s`," % field
 

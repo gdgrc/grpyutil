@@ -34,12 +34,7 @@ class DataReader(object):
         #
         self.total_read_num = 0
 
-        self.fields_index_dict = {}
-        self.fields_list = self.tc.get_filter_fields()
-
-        for i in range(len(self.fields_list)):
-            field = self.fields_list[i]
-            self.fields_index_dict[field] = i
+        self.get_fields_index_dict()
 
     def get_tb_conn(self):
         return self.tc
@@ -58,11 +53,26 @@ class DataReader(object):
 
         return self.fields_index_dict[field_name]
 
+    def get_fields_index_dict(self):
+        self.fields_index_dict = {}
+        self.fields_list = self.get_row_fields()
+
+        for i in range(len(self.fields_list)):
+            field = self.fields_list[i]
+            self.fields_index_dict[field] = i
+
+    def set_filter_fields(self, filter_fields, force=False):
+        self.tc.set_filter_fields(filter_fields, force)
+        self.get_fields_index_dict()
+
+    def get_row_fields(self):
+        return self.tc.read_data_columns()
+
     def log_dumps(self):
         return "%d %s %s %s %s %s\n" % (self.finish_flag,
                                         self.sql_path, self.begin_index, self.begin_id_index, self.end_read_num, self.type)
 
-    def get_next_rows(self, dict_query=False):
+    def get_next_rows(self, dict_query=False, extra_sql=""):
         # begin to read data
 
         if self.end_read_num and self.total_read_num >= self.end_read_num:
@@ -80,7 +90,7 @@ class DataReader(object):
 
             data_list, rows_affected = self.tc.read_data(read_linenum=read_linenum,
                                                          begin_index=self.read_index, begin_id_index=self.read_id_index,
-                                                         begin_id_index_name=self.begin_id_index_name, dict_query=dict_query)
+                                                         begin_id_index_name=self.begin_id_index_name, dict_query=dict_query, extra_sql=extra_sql)
 
         logging.info("Read Data from %s, ReadIndex: %d, ReadIdIndex: %s , ReadIdIndexName: %s, ReadLineNum: %s, RowsAffected: %s" % (self.tc.table_name,
                                                                                                                                      self.read_index,

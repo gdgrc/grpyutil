@@ -15,4 +15,4 @@ if __name__ == "__main__":
     assert decode_str == test_str, "no equal decode: %s, origin: %s" % (decode_str, test_str)
 
     msg = "[Pass] AesRC4Base64 Test!"
-    print(msg)
+    print(encode_str, msg)
