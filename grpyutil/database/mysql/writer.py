@@ -91,7 +91,7 @@ class DataWriter(object):
 
             # try to retry the transaction
 
-            try_times = 10
+            try_times = 1000
             while(True):
 
                 try:
