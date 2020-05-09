@@ -36,6 +36,11 @@ class DataReader(object):
 
         self.get_fields_index_dict()
 
+        if self.begin_id_index_name:
+            # check if this is a index
+
+            assert self.tc.check_if_column_is_index(self.begin_id_index_name), "%s is not a index!" % (self.begin_id_index_name)
+
     def get_tb_conn(self):
         return self.tc
 

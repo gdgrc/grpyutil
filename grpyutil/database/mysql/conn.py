@@ -175,6 +175,8 @@ class TableConn(object):
 
         self._constraint_fields_list = None
 
+        self._index_fields_dict = None
+
         self.read_fields()
 
     def copy(self, table_name):
@@ -290,6 +292,57 @@ class TableConn(object):
             self._detail_fields_map[name] = data_dict
 
         return self._detail_fields_list
+
+    def read_index_fields(self):
+        if self._index_fields_dict is not None:
+            return self._index_fields_dict
+
+        self._index_fields_dict = {}
+
+        sql = " show index from %s " % self.table_name
+
+        rows, rows_length = self.db_conn_object.query(sql)
+        """
+            Table: railway
+           Non_unique: 1
+             Key_name: uid
+         Seq_in_index: 1
+          Column_name: uid
+            Collation: A
+          Cardinality: 144530576
+             Sub_part: NULL
+               Packed: NULL
+                 Null: 
+           Index_type: BTREE
+              Comment: 
+        Index_comment: 
+
+        ('railway05_00306_711_func_data_md5decode', 1, 'uid', 1, 'uid', 'A', None, None, None, '', 'BTREE', '', '')
+
+
+        """
+        for row in rows:
+
+            if row[1] not in self._index_fields_dict:
+                self._index_fields_dict[row[2]] = {}
+
+            self._index_fields_dict[row[2]][row[3]] = {"table": row[0], "non_unique": row[1],
+                                                       "key_name": row[2], "seq_in_index": row[3], "column_name": row[4],
+                                                       "collation": row[5], "cardinality": row[6], "sub_part": row[7],
+                                                       "packed": row[8], "null": row[9], "index_type": row[10],
+                                                       "comment": row[11], "index_comment": row[12]}
+
+        return self._index_fields_dict
+
+    def check_if_column_is_index(self, column):
+        index_fields_dict = self.read_index_fields()
+
+        for index_name, seq_dict in self._index_fields_dict.items():
+
+            if seq_dict[1]["column_name"] == column:
+                return True
+
+        return False
 
     def commit(self):
 
