@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class DateTime(object):
@@ -19,7 +19,7 @@ class DateTime(object):
                     self.datetime = datetime.strptime(instr, "%Y-%m-%d")
                     self.datetime_type = 3
                 except Exception as e:
-                    print(e)
+
                     self.datetime = datetime.strptime(instr, "%Y-%m")
                     self.datetime_type = 4
 
@@ -27,3 +27,6 @@ class DateTime(object):
 
     def to_string(self):
         return self.datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+    def get_the_first_day_of_week(self):
+        return DateTime((self.datetime - timedelta(days=self.datetime.isocalendar()[2] - 1)).strftime("%Y-%m-%d"))

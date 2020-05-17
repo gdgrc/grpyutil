@@ -96,9 +96,11 @@ class DataWriter(object):
 
                 try:
 
-                    ret = self.tc.executemany(sql, self.cache_write_data_list)
+                    self.tc.executemany(sql, self.cache_write_data_list)  # ret 0
 
-                    self.tc.commit()
+                    self.tc.commit()  # ret 0
+
+                    ret = 1
 
                     break
 

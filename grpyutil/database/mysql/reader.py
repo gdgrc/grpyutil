@@ -97,12 +97,14 @@ class DataReader(object):
                                                          begin_index=self.read_index, begin_id_index=self.read_id_index,
                                                          begin_id_index_name=self.begin_id_index_name, dict_query=dict_query, extra_sql=extra_sql)
 
-        logging.info("Read Data from %s, ReadIndex: %d, ReadIdIndex: %s , ReadIdIndexName: %s, ReadLineNum: %s, RowsAffected: %s" % (self.tc.table_name,
-                                                                                                                                     self.read_index,
-                                                                                                                                     self.read_id_index,
-                                                                                                                                     self.begin_id_index_name,
-                                                                                                                                     read_linenum,
-                                                                                                                                     rows_affected))
+        self.total_read_num = self.total_read_num + rows_affected
+
+        logging.info("Read Data from %s, ReadIndex: %d, ReadIdIndex: %s , ReadIdIndexName: %s, ReadLineNum: %s, RowsAffected: %s,ReadTotal: %d" % (self.tc.table_name,
+                                                                                                                                                   self.read_index,
+                                                                                                                                                   self.read_id_index,
+                                                                                                                                                   self.begin_id_index_name,
+                                                                                                                                                   read_linenum,
+                                                                                                                                                   rows_affected, self.total_read_num))
 
         # no more data
         if rows_affected == 0:
@@ -132,7 +134,5 @@ class DataReader(object):
         else:
 
             self.read_index = self.read_index + self.read_linenum
-
-        self.total_read_num = self.total_read_num + rows_affected
 
         return data_list, rows_affected
