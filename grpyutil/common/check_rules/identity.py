@@ -42,6 +42,23 @@ class Identity(object):
     def get_identity(self):
         return self._identity
 
+    def get_province_code(self):
+        return self._identity[0:2]
+
+    def get_city_code(self):
+        return self._identity[2:4]
+
+    def get_district_code(self):
+        return self._identity[4:6]
+
+    def get_birth_code(self):
+        return self._identity_birth
+
+    def get_sex_code(self):
+        sex_code = int(self._identity[16])
+        sex_code = 2 if sex_code % 2 == 0 else 1
+        return sex_code
+
 
 """
 def check_identity(identity):
