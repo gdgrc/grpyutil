@@ -14,6 +14,12 @@ class CellPhone(object):
     def get_cell(self):
         return self._cell_phone_string
 
+    def get_area_code(self):
+        return self._cell_phone_string[3:7]
+
+    def get_net_code(self):
+        return self._cell_phone_string[0:3]
+
 
 if __name__ == "__main__":
     cell = "13513512243"

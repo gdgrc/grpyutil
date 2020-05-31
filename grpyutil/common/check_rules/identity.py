@@ -1,5 +1,5 @@
 
-import time
+import datetime
 from .identity_code import IDENTITY_CODE
 """
 identity check
@@ -33,7 +33,7 @@ class Identity(object):
 
         try:
 
-            time.strptime(self._identity_birth, "%Y%m%d")
+            self._birth_datetime = datetime.datetime.strptime(self._identity_birth, "%Y%m%d")
         except Exception as e:
             raise Exception("identity code birth is not good! %s, err: %s" % (self._identity_birth, e))
 
@@ -53,6 +53,9 @@ class Identity(object):
 
     def get_birth_code(self):
         return self._identity_birth
+
+    def get_birth_datetime(self):
+        return self._birth_datetime
 
     def get_sex_code(self):
         sex_code = int(self._identity[16])

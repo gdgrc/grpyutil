@@ -273,16 +273,20 @@ class TableConn(object):
 
         self.read_constraint_fields()
         for row in rows:
+
+            # print(row)
             comment = row[19]
             name = row[3]
 
             data_type = row[7]
 
+            length = row[8]
+
             char_index = data_type.find("(")
             if char_index >= 0:
                 name = name[0:char_index]
 
-            data_dict = {"comment": comment, "name": name, "data_type": data_type}
+            data_dict = {"comment": comment, "name": name, "data_type": data_type, "length": length}
 
             if name in self._constraint_fields_map:
                 data_dict.update(self._constraint_fields_map[name])
