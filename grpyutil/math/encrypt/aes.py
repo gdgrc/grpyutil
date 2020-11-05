@@ -1,4 +1,4 @@
-from Crypto.Cipher import AES
+from Cryptodome.Cipher import AES
 from binascii import b2a_hex, a2b_hex
 
 
@@ -8,6 +8,7 @@ class Aes():
         self.aes_key = key
         if not iv:
             iv = key
+
         self.aes_iv = iv
         self.padding_char = padding_char
         self.mode = mode
@@ -27,6 +28,8 @@ class Aes():
         tmp_data = data + (self.padding_char * padding_len)
 
         aes_cryptor = AES.new(self.aes_key, self.mode, self.aes_iv)
+
+        tmp_data = str.encode(tmp_data)
         encrypt_data = aes_cryptor.encrypt(tmp_data)
 
         # return b2a_hex(encrypt_data)

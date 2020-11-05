@@ -28,12 +28,36 @@ logging.basicConfig(
 
 def main(args):
 
-    dr = mysql.DataReader(args.bi, args.bii, args.f, 0, 0, "", read_linenum=args.npr)
+    dr = mysql.DataReader(0, None, args.f, 0, 0, "", read_linenum=30)
     # {'comment': '广告投放的城市', 'name': 'ad_city', 'data_type': 'varchar', 'length': 50}
+
+    table_comment = dr.tc.read_table_comment()
     detail_fields = dr.tc.read_detail_fields()
     generate_string = ""
     print(detail_fields)
+    table_name = dr.tc.table_name
+
+    table_name_arr = table_name.split('_')
+
+    model_name = ""
+    for item in table_name_arr:
+        model_name += item[0].upper()
+        if len(item) > 1:
+            model_name += item[1:]
+
+    generate_string += "class %s(models.Model):\n" % (model_name)
+
+    if not table_comment:
+        raise Exception("table: %s 's table_comment should not be empty" % (table_name))
+
+    generate_string += "\tclass Meta:\n"
+    generate_string += "\t\tdb_table = '%s'\n" % (table_name)
+    generate_string += "\n\t# table_desc: %s\n" % (table_comment)
+
+    model_field_list = []
     for item in detail_fields:
+
+        model_field_list.append(item)
         field_type = ""
         if "char" in item["data_type"]:
             field_type = "CharField(max_length=%d)" % (item["length"] + 20)
@@ -43,7 +67,11 @@ def main(args):
             field_type = "IntegerField()"
         else:
             raise Exception("unknow type: %s" % item["data_type"])
-        generate_string += "%s = models.%s\n" % (item["name"], field_type)
+
+        comment = item["comment"]
+        if not comment:
+            raise Exception("comment should not be empty %s" % (item))
+        generate_string += "\t%s = models.%s  # field_desc: %s\n" % (item["name"], field_type, comment)
 
     print(generate_string)
 
