@@ -19,9 +19,12 @@ class DateTime(object):
                     self.datetime = datetime.strptime(instr, "%Y-%m-%d")
                     self.datetime_type = 3
                 except Exception as e:
-
-                    self.datetime = datetime.strptime(instr, "%Y-%m")
-                    self.datetime_type = 4
+                    try:
+                        self.datetime = datetime.strptime(instr, "%Y-%m")
+                        self.datetime_type = 4
+                    except Exception as e:
+                        self.datetime = datetime.strptime(instr, "%Y-%m-%d %H:%M:%S.%f")
+                        self.datetime_type = 5
 
         return
 
