@@ -33,3 +33,21 @@ class DateTime(object):
 
     def get_the_first_day_of_week(self):
         return DateTime((self.datetime - timedelta(days=self.datetime.isocalendar()[2] - 1)).strftime("%Y-%m-%d"))
+
+    def equal(self, d):
+        # delta = self.sub(d)
+        if self.datetime == d.datetime:
+            return True
+        return False
+
+    def greater(self, d):
+        # delta = self.sub(d)
+        if self.datetime > d.datetime:
+            return True
+        return False
+
+    def sub(self, d):
+        return self.datetime - d.datetime
+
+    def fewer(self):
+        pass
