@@ -23,8 +23,20 @@ class DateTime(object):
                         self.datetime = datetime.strptime(instr, "%Y-%m")
                         self.datetime_type = 4
                     except Exception as e:
-                        self.datetime = datetime.strptime(instr, "%Y-%m-%d %H:%M:%S.%f")
-                        self.datetime_type = 5
+                        try:
+                            self.datetime = datetime.strptime(instr, "%Y-%m-%d %H:%M:%S.%f")
+                            self.datetime_type = 5
+                        except Exception as e:
+
+                            try:
+                                self.datetime = datetime.fromtimestamp(int(instr))
+                                self.datetime_type = 6
+                            except Exception as e:
+                                timestamp_ms = int(instr)
+                                if timestamp_ms < 1000:
+                                    raise Exception("timestamp is not timestamp ms. %d" % timestamp_ms)
+                                self.datetime = datetime.fromtimestamp(timestamp_ms / 1000)
+                                self.datetime_type = 7
 
         return
 
