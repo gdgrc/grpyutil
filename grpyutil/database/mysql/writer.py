@@ -5,7 +5,7 @@ import time
 
 
 class DataWriter(object):
-    def __init__(self, sql_path, copy_tb_conn, copy_tb_name, is_replace=False, write_linenum=30000):
+    def __init__(self, sql_path, copy_tb_conn, copy_tb_name, is_replace=False, write_linenum=30000, copy_tb_extra_dml=[]):
 
         if sql_path:
 
@@ -29,6 +29,13 @@ class DataWriter(object):
             tb_definition = copy_tb_definition.replace(tmp_copy_tb_name, copy_tb_name)
 
             copy_tb_conn.execute(tb_definition)
+
+            if copy_tb_extra_dml:
+                for dml in copy_tb_extra_dml:
+                    try:
+                        copy_tb_conn.execute(dml % (copy_tb_name))
+                    except Exception as e:
+                        raise Exception(e)
 
             # create copy table
             self.tc = copy_tb_conn.copy(copy_tb_name)
