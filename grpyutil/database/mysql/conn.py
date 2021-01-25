@@ -326,8 +326,9 @@ class TableConn(object):
 
         """
         for row in rows:
+            # print(row)
 
-            if row[1] not in self._index_fields_dict:
+            if row[2] not in self._index_fields_dict:
                 self._index_fields_dict[row[2]] = {}
 
             self._index_fields_dict[row[2]][row[3]] = {"table": row[0], "non_unique": row[1],
@@ -341,9 +342,12 @@ class TableConn(object):
     def check_if_column_is_index(self, column):
         index_fields_dict = self.read_index_fields()
 
-        for index_name, seq_dict in self._index_fields_dict.items():
+        # print("aaaaaaa:", self._index_fields_dict, column)
 
-            if seq_dict[1]["column_name"] == column:
+        for index_name, seq_dict in self._index_fields_dict.items():
+            # print(index_name, seq_dict[1])
+
+            if (seq_dict[1]["column_name"]).lower() == column.lower():
                 return True
 
         return False
@@ -364,16 +368,19 @@ class TableConn(object):
 
         return comment
 
+    def read_table_raw_definition(self):
+        sql = "SHOW CREATE TABLE `%s`" % self.table_name
+
+        rows, rows_length = self.db_conn_object.query(sql)
+
+        return rows[0][1]
+
     def read_table_definition(self):
         """
         get upper table definition
         """
 
-        sql = "SHOW CREATE TABLE `%s`" % self.table_name
-
-        rows, rows_length = self.db_conn_object.query(sql)
-
-        return (rows[0][1]).upper()
+        return (self.read_table_raw_definition()).upper()
 
     def set_filter_fields(self, target_fields, force=False):
 
@@ -449,7 +456,7 @@ class TableConn(object):
                 if "WHERE" in sql:
                     sql += (" AND " + extra_sql)
                 else:
-                    sql += extra_sql
+                    sql += ("WHERE " + extra_sql)
 
             # limit begin
             if read_linenum > 0:

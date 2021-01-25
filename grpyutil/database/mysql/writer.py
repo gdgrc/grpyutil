@@ -15,18 +15,20 @@ class DataWriter(object):
 
         else:
 
-            copy_tb_definition = copy_tb_conn.read_table_definition()
+            copy_tb_definition = copy_tb_conn.read_table_raw_definition()
 
-            tmp_copy_tb_name = copy_tb_conn.get_table_name().upper()
+            tmp_copy_tb_name = copy_tb_conn.get_table_name()
 
             if not copy_tb_name:
 
                 copy_tb_name = tmp_copy_tb_name + "_COPY"
 
             if is_replace is True:
-                copy_tb_conn.execute("drop table %s" % copy_tb_name)
+                copy_tb_conn.execute("drop table if exists %s" % copy_tb_name)
 
             tb_definition = copy_tb_definition.replace(tmp_copy_tb_name, copy_tb_name)
+
+            # print(copy_tb_name, tb_definition)
 
             copy_tb_conn.execute(tb_definition)
 
@@ -102,6 +104,7 @@ class DataWriter(object):
             while(True):
 
                 try:
+                    # print(sql, self.cache_write_data_list)
 
                     self.tc.executemany(sql, self.cache_write_data_list)  # ret 0
 
