@@ -77,7 +77,7 @@ class DataReader(object):
         return "%d %s %s %s %s %s\n" % (self.finish_flag,
                                         self.sql_path, self.begin_index, self.begin_id_index, self.end_read_num, self.type)
 
-    def get_next_rows(self, dict_query=False, extra_sql=""):
+    def get_next_rows(self, dict_query=False, extra_sql="", log=True):
         # begin to read data
 
         if self.end_read_num and self.total_read_num >= self.end_read_num:
@@ -98,13 +98,14 @@ class DataReader(object):
                                                          begin_id_index_name=self.begin_id_index_name, dict_query=dict_query, extra_sql=extra_sql)
 
         self.total_read_num = self.total_read_num + rows_affected
+        if log:
 
-        logging.info("Read Data from %s, ReadIndex: %d, ReadIdIndex: %s , ReadIdIndexName: %s, ReadLineNum: %s, RowsAffected: %s,ReadTotal: %d" % (self.tc.table_name,
-                                                                                                                                                   self.read_index,
-                                                                                                                                                   self.read_id_index,
-                                                                                                                                                   self.begin_id_index_name,
-                                                                                                                                                   read_linenum,
-                                                                                                                                                   rows_affected, self.total_read_num))
+            logging.info("Read Data from %s, ReadIndex: %d, ReadIdIndex: %s , ReadIdIndexName: %s, ReadLineNum: %s, RowsAffected: %s,ReadTotal: %d" % (self.tc.table_name,
+                                                                                                                                                       self.read_index,
+                                                                                                                                                       self.read_id_index,
+                                                                                                                                                       self.begin_id_index_name,
+                                                                                                                                                       read_linenum,
+                                                                                                                                                       rows_affected, self.total_read_num))
 
         # no more data
         if rows_affected == 0:
