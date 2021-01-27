@@ -77,6 +77,11 @@ class DataReader(object):
         return "%d %s %s %s %s %s\n" % (self.finish_flag,
                                         self.sql_path, self.begin_index, self.begin_id_index, self.end_read_num, self.type)
 
+    def reset(self):
+        self.read_index = 0
+        self.read_id_index = 0
+        self.total_read_num = 0
+
     def get_next_rows(self, dict_query=False, extra_sql="", log=True):
         # begin to read data
 
