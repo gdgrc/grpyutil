@@ -5,6 +5,7 @@ class DateTime(object):
     def __init__(self, instr):
         self.datetime = None
         self.datetime_type = 0
+        
 
         try:
             self.datetime = datetime.strptime(instr, "%Y-%m-%d %H:%M:%S")

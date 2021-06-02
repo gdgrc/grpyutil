@@ -2,7 +2,7 @@ class ChineseName(object):
     def __init__(self, name):
         self._name = str(name)
         for ucode in self._name:
-            assert ucode >= '\u4e00' and ucode <= '\u9fa5', "name is not good %s" % self._name
+            assert (ucode >= '\u4e00' and ucode <= '\u9fa5') or (ucode=='·'), "name is not good %s. ucode: %s" % (self._name,ucode)
 
     def get_name(self):
         return self._name
@@ -10,6 +10,7 @@ class ChineseName(object):
 
 if __name__ == "__main__":
     name = "嘿嘿嘿嘿嘿嘿嘿"
+    name = "肉克也木·吐孙"
     ChineseName(name)
 
 
