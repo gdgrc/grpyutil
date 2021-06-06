@@ -13,7 +13,7 @@ class Identity(object):
 
         self._identity = identity.upper()
 
-        assert len(self._identity) == 18, "lenght is not 18"
+        assert len(self._identity) == 18, "lenght is not 18. identity: %s" % (self._identity)
 
         # assert len(self._identity) == 18, "identity is not 18 length"
 
@@ -27,7 +27,7 @@ class Identity(object):
 
         self._identity_code = self._identity[0:6]
 
-        assert self._identity_code in IDENTITY_CODE, "identity code is not normal! %s" % (self._identity_code)
+        assert self._identity_code in IDENTITY_CODE, "identity code is not normal! %s identity: %s" % (self._identity_code,self._identity)
 
         self._identity_birth = self._identity[6:14]
 
