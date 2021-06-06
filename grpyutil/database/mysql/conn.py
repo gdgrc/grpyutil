@@ -442,7 +442,7 @@ class TableConn(object):
 
         sql = ""
         try:
-            sql = "SELECT %s FROM `%s` " % (','.join("%s" % item for item in self._filter_fields), self.table_name)
+            sql = "SELECT %s FROM `%s` " % (','.join("`%s`" % item for item in self._filter_fields), self.table_name)
             args_list = []
 
             # id begin may be faster
