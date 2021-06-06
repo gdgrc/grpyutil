@@ -7,7 +7,7 @@ find_packages_list = find_packages()
 print(find_packages_list)
 setup(
     name="grpyutil",
-    version="0.37",
+    version="0.38",
     description="utils module",
     author="ZJ",
     # url="",
