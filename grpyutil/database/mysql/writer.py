@@ -29,8 +29,10 @@ class DataWriter(object):
             tb_definition = copy_tb_definition.replace(tmp_copy_tb_name, copy_tb_name)
 
             # print(copy_tb_name, tb_definition)
-
-            copy_tb_conn.execute(tb_definition)
+            try:
+                copy_tb_conn.execute(tb_definition)
+            except Exception:
+                pass
 
             if copy_tb_extra_dml:
                 for dml in copy_tb_extra_dml:
