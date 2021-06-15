@@ -31,8 +31,8 @@ class DataWriter(object):
             # print(copy_tb_name, tb_definition)
             try:
                 copy_tb_conn.execute(tb_definition)
-            except Exception:
-                pass
+            except Exception as e:
+                print("sql: ",tb_definition," err: ",e)
 
             if copy_tb_extra_dml:
                 for dml in copy_tb_extra_dml:
