@@ -117,7 +117,7 @@ class DataWriter(object):
                     break
 
                 except Exception as e:
-                    if "try restarting transaction" in str(e):
+                    if "try restarting transaction" in str(e) or "Lost connection" in str(e) or "has gone away" in str(e):
 
                         time.sleep(2)
                         if try_times > 0:
