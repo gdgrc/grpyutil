@@ -402,14 +402,15 @@ class TableConn(object):
         return self.db_conn_object.dict_query(query, args)
 
     def query(self, query, args=None):
-
+        
         return self.db_conn_object.query(query, args)
 
     def execute(self, query, args=None):
-
+        self.db_conn_object.ping(reconnect=True)
         return self.db_conn_object.execute(query, args)
 
     def executemany(self, query, args=None):
+        self.db_conn_object.ping(reconnect=True)
 
         return self.db_conn_object.executemany(query, args)
 
