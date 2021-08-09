@@ -51,6 +51,7 @@ class DbConn(object):
         return cursor.mogrify(query, args)
 
     def execute(self, query, args=None):
+        self.check_and_fix()
         cursor = self.db_conn.cursor()
         ret = cursor.execute(query, args)
 
@@ -59,6 +60,7 @@ class DbConn(object):
         return ret
 
     def executemany(self, query, args):
+        self.check_and_fix()
         cursor = self.db_conn.cursor()
 
         ret = cursor.executemany(query, args)
@@ -68,7 +70,7 @@ class DbConn(object):
         return ret
 
     def dict_query(self, query, args=None):
-
+        self.check_and_fix()
         cursor = self.db_conn.cursor(cursor=pymysql.cursors.DictCursor)
         rows_length = cursor.execute(query, args)
         rows = cursor.fetchall()
@@ -406,11 +408,11 @@ class TableConn(object):
         return self.db_conn_object.query(query, args)
 
     def execute(self, query, args=None):
-        self.db_conn_object.ping(reconnect=True)
+        
         return self.db_conn_object.execute(query, args)
 
     def executemany(self, query, args=None):
-        self.db_conn_object.ping(reconnect=True)
+        
 
         return self.db_conn_object.executemany(query, args)
 
