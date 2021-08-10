@@ -70,7 +70,7 @@ class DataWriter(object):
     def set_ignore(self, b):
         self.ignore = b
 
-    def write_rows(self, value_list, force=False):
+    def write_rows(self, value_list, force=False,ignore=False):
 
         if value_list:
             self.cache_write_data_list.extend(value_list)
@@ -117,6 +117,7 @@ class DataWriter(object):
                     break
 
                 except Exception as e:
+                    logging.info("writeRows Exception: %s,try_times: %d",str(e),try_times)
                     if "try restarting transaction" in str(e) or "Lost connection" in str(e) or "has gone away" in str(e):
 
                         time.sleep(2)
@@ -125,7 +126,8 @@ class DataWriter(object):
                         else:
                             raise Exception("retry %d times,but did not pass,err: %s" % (try_times, e))
                     else:
-                        raise e
+                        if not ignore:
+                            raise e
 
             # print(self.tc.get_sql_path())
             #print(sql, self.cache_write_data_list)
