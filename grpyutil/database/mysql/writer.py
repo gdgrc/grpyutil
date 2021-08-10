@@ -142,6 +142,6 @@ class DataWriter(object):
 
         return ret
 
-    def flush(self):
+    def flush(self,ignore=False):
 
-        return self.write_rows(None, force=True)
+        return self.write_rows(None, force=True,ignore=ignore)
