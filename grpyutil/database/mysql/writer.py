@@ -117,17 +117,19 @@ class DataWriter(object):
                     break
 
                 except Exception as e:
-                    logging.info("writeRows Exception: %s,try_times: %d",str(e),try_times)
+                   
                     if "try restarting transaction" in str(e) or "Lost connection" in str(e) or "has gone away" in str(e):
-
+                        logging.info("writeRows retry Exception: %s,try_times: %d",str(e),try_times)
                         time.sleep(2)
                         if try_times > 0:
                             try_times = try_times - 1
                         else:
                             raise Exception("retry %d times,but did not pass,err: %s" % (try_times, e))
                     else:
+                        logging.info("writeRows fatal Exception: %s,try_times: %d,ignore: %s",str(e),try_times,ignore)
                         if not ignore:
                             raise e
+                        break
 
             # print(self.tc.get_sql_path())
             #print(sql, self.cache_write_data_list)
