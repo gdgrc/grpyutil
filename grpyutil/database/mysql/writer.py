@@ -126,7 +126,7 @@ class DataWriter(object):
                         else:
                             raise Exception("retry %d times,but did not pass,err: %s" % (try_times, e))
                     else:
-                        logging.info("writeRows fatal Exception: %s,try_times: %d,ignore: %s",str(e),try_times,ignore)
+                        logging.info("writeRows fatal Exception: %s,try_times: %d,ignore: %s sql: %s",str(e),try_times,ignore,sql)
                         if cache_length<=20:
                             logging.info("fatal sql: %s data: " % (sql,self.cache_write_data_list))
                         if not ignore:
