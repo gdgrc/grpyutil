@@ -108,9 +108,9 @@ class DataWriter(object):
                 try:
                     # print(sql, self.cache_write_data_list)
 
-                    self.tc.executemany(sql, self.cache_write_data_list)  # ret 0
+                    execute_ret = self.tc.executemany(sql, self.cache_write_data_list)  # ret 0
 
-                    self.tc.commit()  # ret 0
+                    commit_ret = self.tc.commit()  # ret 0
 
                     ret = 1
 
@@ -138,7 +138,7 @@ class DataWriter(object):
 
             self.cache_write_data_list.clear()
 
-            logging.info("Finishing inserting data num: %d" % cache_length)
+            logging.info("Finishing inserting data num: %d.execute_ret: %s" % (cache_length,execute_ret,commit_ret))
 
         return ret
 
