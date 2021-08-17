@@ -127,6 +127,8 @@ class DataWriter(object):
                             try_times = try_times - 1
                         else:
                             raise Exception("retry %d times,but did not pass,err: %s" % (try_times, e))
+                    elif "is full" in str(e):
+                        raise Exception(e)
                     else:
                         logging.info("writeRows fatal Exception: %s,try_times: %d,ignore: %s sql: %s demodata: %s",str(e),try_times,ignore,sql,self.cache_write_data_list[0])
                         if cache_length<=10:
