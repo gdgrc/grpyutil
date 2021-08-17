@@ -103,6 +103,8 @@ class DataWriter(object):
             # try to retry the transaction
 
             try_times = 1000
+            execute_ret = None
+            commit_ret= None
             while(True):
 
                 try:
