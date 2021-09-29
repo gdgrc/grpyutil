@@ -57,6 +57,8 @@ class DataWriter(object):
 
         self.total_write_num = 0
 
+        self.raw_sql = ""
+
     def set_write_fields(self, field_list):
 
         self.cache_write_field_list = field_list
@@ -70,6 +72,9 @@ class DataWriter(object):
     def set_ignore(self, b):
         self.ignore = b
 
+    def set_raw_sql(self,b):
+        self.raw_sql = b
+
     def write_rows(self, value_list, force=False,ignore=False):
 
         if value_list:
@@ -80,25 +85,28 @@ class DataWriter(object):
         cache_length = len(self.cache_write_data_list)
 
         if cache_length > 0 and (force or cache_length >= self.write_linenum):
-            sql = "insert "
-            if self.ignore:
-                sql += " ignore "
-            sql += " into %s (" % self.tc.get_table_name()
-            for field in self.cache_write_field_list:
-                sql += "`%s`," % field
 
-            sql = sql[:-1]
-            sql = sql + ") values ("
-            for field in self.cache_write_field_list:
-                sql += "%s,"
+            sql = self.raw_sql
+            if not sql:
+                sql = "insert "
+                if self.ignore:
+                    sql += " ignore "
+                sql += " into %s (" % self.tc.get_table_name()
+                for field in self.cache_write_field_list:
+                    sql += "`%s`," % field
 
-            sql = sql[:-1]
-            sql = sql + ") ON DUPLICATE KEY UPDATE "
+                sql = sql[:-1]
+                sql = sql + ") values ("
+                for field in self.cache_write_field_list:
+                    sql += "%s,"
 
-            for field in self.cache_write_on_dup_field_list:
-                sql += "`%s`=VALUES(`%s`)," % (field, field)
+                sql = sql[:-1]
+                sql = sql + ") ON DUPLICATE KEY UPDATE "
 
-            sql = sql[:-1]
+                for field in self.cache_write_on_dup_field_list:
+                    sql += "`%s`=VALUES(`%s`)," % (field, field)
+
+                sql = sql[:-1]
 
             # try to retry the transaction
 
