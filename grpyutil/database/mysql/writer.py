@@ -138,7 +138,7 @@ class DataWriter(object):
                     elif "is full" in str(e):
                         raise Exception(e)
                     else:
-                        logging.info("writeRows fatal Exception: %s,try_times: %d,ignore: %s sql: %s demodata: %s",str(e),try_times,ignore,sql,self.cache_write_data_list[0])
+                        logging.info("writeRows fatal Exception: %s,try_times: %d,ignore: %s sql: %s demodata: %s(%d)",str(e),try_times,ignore,sql,self.cache_write_data_list[0],len(self.cache_write_data_list[0]))
                         if cache_length<=10:
                             logging.info("fatal sql: %s data: " % (sql,self.cache_write_data_list))
                         if not ignore:
