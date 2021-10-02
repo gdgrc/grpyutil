@@ -6,7 +6,7 @@ class DateTime(object):
         self.datetime = None
         self.datetime_type = 0
 
-        if type(instr)==datetime:
+        if isinstance(instr, datetime):
             self.datetime = instr
         
 
