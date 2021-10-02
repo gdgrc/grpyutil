@@ -36,11 +36,15 @@ class DateTime(object):
                                 self.datetime = datetime.fromtimestamp(int(instr))
                                 self.datetime_type = 6
                             except Exception as e:
-                                timestamp_ms = int(instr)
-                                if timestamp_ms < 1000:
-                                    raise Exception("timestamp is not timestamp ms. %d" % timestamp_ms)
-                                self.datetime = datetime.fromtimestamp(timestamp_ms / 1000)
-                                self.datetime_type = 7
+                                try:
+                                    timestamp_ms = int(instr)
+                                    if timestamp_ms < 1000:
+                                        raise Exception("timestamp is not timestamp ms. %d" % timestamp_ms)
+                                    self.datetime = datetime.fromtimestamp(timestamp_ms / 1000)
+                                    self.datetime_type = 7
+                                except Exception as e:
+                                    raise Exception("unknow type: %s" % (type(instr)))
+
 
         return
 
