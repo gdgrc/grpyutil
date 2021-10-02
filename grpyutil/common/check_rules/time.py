@@ -5,6 +5,9 @@ class DateTime(object):
     def __init__(self, instr):
         self.datetime = None
         self.datetime_type = 0
+
+        if type(instr)==datetime:
+            self.datetime = instr
         
 
         try:
