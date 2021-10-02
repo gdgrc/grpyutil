@@ -43,7 +43,7 @@ class DateTime(object):
                                     self.datetime = datetime.fromtimestamp(timestamp_ms / 1000)
                                     self.datetime_type = 7
                                 except Exception as e:
-                                    raise Exception("unknow type: %s" % (type(instr)))
+                                    raise Exception("unknow type: %s error : %s" % (type(instr), e))
 
 
         return
