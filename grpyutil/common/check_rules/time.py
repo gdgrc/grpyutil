@@ -44,6 +44,9 @@ class DateTime(object):
     def to_string(self):
         return self.datetime.strftime("%Y-%m-%d %H:%M:%S")
 
+    def to_date(self):
+        return self.datetime.strftime("%Y-%m-%d")
+
     def get_the_first_day_of_week(self):
         return DateTime((self.datetime - timedelta(days=self.datetime.isocalendar()[2] - 1)).strftime("%Y-%m-%d"))
 
