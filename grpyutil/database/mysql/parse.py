@@ -2,6 +2,21 @@ import sys
 from grpyutil.common.check_rules import Ipv4
 
 
+
+def get_db_mysql_path(sql_config):
+    sql= "sql://%s:%d/%s:%s/%s" % (sql_config["host"],sql_config["port"],
+    sql_config["user"],sql_config["password"],sql_config["database"])
+
+    return sql
+
+def get_table_mysql_path(sql_config):
+    sql = get_db_mysql_path(sql_config)
+    if "table" not in sql_config:
+        raise Exception("no table in sql_config")
+    
+    sql = sql + "/" + sql_config["table"]
+    return sql
+
 def parse_mysql_path(sql_path):
     """
     parse mysql path like : sql://127.0.0.1:3306/user:pwd/database/table

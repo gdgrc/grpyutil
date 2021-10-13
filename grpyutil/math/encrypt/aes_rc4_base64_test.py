@@ -15,3 +15,5 @@ if __name__ == "__main__":
 
     msg = "[Pass] AesRC4Base64 Test!"
     print(encode_str, msg)
+
+    
