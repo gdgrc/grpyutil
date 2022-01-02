@@ -152,7 +152,7 @@ class DataWriter(object):
 
             self.cache_write_data_list.clear()
 
-            logging.info("Finishing inserting data num: %d.execute_ret: %s,commit_ret: %s" % (cache_length,execute_ret,commit_ret))
+            logging.info("Finishing inserting Table: %s data num: %d.execute_ret: %s,commit_ret: %s" % (self.tc.get_table_name(),cache_length,execute_ret,commit_ret))
 
         return ret
 
