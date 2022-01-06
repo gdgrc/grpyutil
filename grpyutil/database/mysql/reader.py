@@ -7,6 +7,8 @@ class DataReader(object):
     def __init__(self, begin_index, begin_id_index, sql_path, finish_flag, end_read_num, begin_id_index_name, dc=None, table_name=None, read_linenum=30000):
         self.begin_index = begin_index
         self.begin_id_index = begin_id_index
+
+        # 不一定是唯一，但是这里有问题的是假如不唯一的话 重新数量大于每次读数量就会死循环。情况很少
         self.begin_id_index_name = begin_id_index_name
 
         self.finish_flag = finish_flag
@@ -134,7 +136,7 @@ class DataReader(object):
                 id_value = data_list[rows_affected - 1][self.begin_id_index_name]
 
             self.read_id_index = id_value  # int(id_value) + 1
-
+            
             self.read_index = 0
 
         else:

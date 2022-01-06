@@ -37,7 +37,11 @@ class DbConn(object):
                                user=sql_config['user'], password=sql_config["password"],
                                database=sql_config["database"],
                                charset=sql_config["coding"] if "coding" in sql_config else "utf8mb4",
-                               autocommit=False)
+                               autocommit=False,
+                               connect_timeout=20,
+                               read_timeout=600,
+                               write_timeout=600)
+        
 
         self.db_conn = conn
         self.sql_path = sql_path
