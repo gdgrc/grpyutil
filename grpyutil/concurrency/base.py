@@ -21,7 +21,7 @@ def deferClean(startLog=True):
                 stack = traceback.format_exc()
                 logging.error("defer clean func: %s exception: %s stack:\n%s",func.__name__,str(e),stack )
                 p_pid = os.getppid() 
-                os.kill(p_pid, signal.SIGTERM)
+                os.kill(p_pid, signal.SIGTERM) # operation not permit?
 
             return
 
@@ -45,7 +45,7 @@ class producerClass():
     def __init__(self):
         pass
 
-    def produce(task:Task,writeTaskQueue:Queue,writeResultQueue:Queue):
+    def produce(self,task:Task,writeTaskQueue:Queue,writeResultQueue:Queue):
         pass
 
 class consumerClass:
@@ -91,7 +91,7 @@ class Parallel():
                 
         @deferClean()
         def multiThreadConsumer(fistTask:Task,queue):
-            logging.info("multiThreadConsumer: "+ fistTask +" consumer start")
+            logging.info("multiThreadConsumer: "+ str(fistTask.getData()) +" consumer start")
             
             c = self.consumerClass()
             c.init(fistTask)
@@ -101,7 +101,7 @@ class Parallel():
             while(True):
             
                 product = queue.get()
-                # logging.info("get data: %s" % (task))
+                # logging.info("get data: %s" % (product.getData()))
                 if product == EXIT_TASK:
                     ret = c.flush()
                     return
@@ -109,9 +109,9 @@ class Parallel():
                 c.consume(product)
 
 
-        @deferClean()
-        def goExtractionWriter(extraction_queue:Queue,sql_path,write_linenum):
-            
+        
+        def goExtractionWriter(extraction_queue:Queue):
+            # logging.info("goExtractionWriter extraction  start")
             @deferClean()
             def bgWriter(extraction_queue:Queue):
 
@@ -124,10 +124,10 @@ class Parallel():
              
                             
                 while(True):
-                    batch_task = extraction_queue.get()
+                    task = extraction_queue.get()
 
             
-                    if batch_task == EXIT_TASK:
+                    if task == EXIT_TASK:
                         # 退出所有协程 并等待退出
                         for distributed_key,v in thread_dict.items():
                             v["queue"].put(EXIT_TASK)
@@ -137,23 +137,23 @@ class Parallel():
 
 
                     # logging.info("get data: "+ str(len(batch_task)))
-                    for task in batch_task:
-                        distributedKey = task.getDistributedKey()
-                        if task.distributed_key not in thread_dict:
-                        
+                    # for task in batch_task:
+                    distributedKey = task.getDistributedKey()
+                    if distributedKey not in thread_dict:
+                    
 
-                            # 初始化线程
-                            q = queue_class(maxsize=50000)
-                        
+                        # 初始化线程
+                        q = queue_class(maxsize=50000)
+                    
 
-                            writerP = thread_class(target=multiThreadConsumer, args=(task,q,))
-                            writerP.daemon = True
-                            writerP.start()
+                        writerP = thread_class(target=multiThreadConsumer, args=(task,q,))
+                        writerP.daemon = True
+                        writerP.start()
 
-                            thread_dict[distributedKey] = {"queue":q,"thread":writerP}
+                        thread_dict[distributedKey] = {"queue":q,"thread":writerP}
 
-                        # logging.info("put data: %s" % (raw_data))
-                        thread_dict[distributedKey]["queue"].put(task)
+                    # logging.info("put data: %s" % (raw_data))
+                    thread_dict[distributedKey]["queue"].put(task)
 
             
                 
@@ -168,12 +168,12 @@ class Parallel():
 
     
         @deferClean()
-        def read_extraction(no,task_queue,consume_result_queue):
+        def read_extraction(no):
             logging.info("read process start: %d" % (no))
             while(True):
-                task = task_queue.get()
+                task = self.readTaskQueue.get()
                 if task == EXIT_TASK:
-                    consume_result_queue.put(0)
+                    self.writeResultQueue.put(0)
                     return
                 p = self.producerClass()
                 p.produce(task,self.writeTaskQueue,self.writeResultQueue)
@@ -185,7 +185,7 @@ class Parallel():
         # 建立读进程组
         read_process_list = []
         for no in range(self.readNum):
-            p = Process(target=read_extraction, args=(no,self.readTaskQueue,self.writeResultQueue,self.writeTaskQueue))
+            p = Process(target=read_extraction, args=(no,))
             p.daemon = True
             p.start()
             read_process_list.append(p)
@@ -197,9 +197,10 @@ class Parallel():
         process_list = [database_process]
 
 
-        self.totalProcessList = process_list.extend(self.readProcessList)
+        process_list.extend(self.readProcessList)
+        self.totalProcessList  = process_list
 
-        logging.info("total process length: %d",len(self.totalProcessList))
+        logging.info("total process length: %d" % len(self.totalProcessList))
 
     def waitFinish(self):
         self.endReadProcessAndWait()
