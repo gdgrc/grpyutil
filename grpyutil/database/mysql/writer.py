@@ -3,10 +3,13 @@ from grpyutil.database import mysql
 from grpyutil.database.file import logging
 import time
 
+from grpyutil.database.mysql.conn import TableConn
+
 
 class DataWriter(object):
-    def __init__(self, sql_path, copy_tb_conn, copy_tb_name, is_replace=False, write_linenum=30000, copy_tb_extra_dml=[]):
-
+    def __init__(self, sql_path, copy_tb_conn:TableConn, copy_tb_name, is_replace=False, write_linenum=30000, copy_tb_extra_dml=[],sort=False,stat_time_cost=False):
+        self.stat_time_cost= stat_time_cost
+        self.sort = sort
         if sql_path:
 
             dc = mysql.get_db_conn(sql_path)
@@ -85,6 +88,30 @@ class DataWriter(object):
         cache_length = len(self.cache_write_data_list)
 
         if cache_length > 0 and (force or cache_length >= self.write_linenum):
+            start = None
+            if self.stat_time_cost:
+                start = time.time()
+
+            if self.sort:
+                pkFields = self.tc.read_pk_fields
+                pkIndexList= []
+                for pk in pkFields:
+                    index = self.cache_write_field_list.index(pk) # this will raise exception
+                    # if pk not in self.cache_write_field_list:
+                    # raise Exception("pk: %s not in cache_write_field_list: %s" % (pk,self.cache_write_field_list))
+                    pkIndexList.append(index)
+
+                if len(pkIndexList)<=0:
+                    raise Exception("no pk key")
+
+                def sortFunc(elem):
+                    pkCmb = ""
+                    for pkIndex in pkIndexList:
+                        pkCmb= pkCmb+str(elem[pkIndex])+"&"
+                    return pkCmb
+
+                self.cache_write_field_list.sort(key=sortFunc)
+ 
 
             sql = self.raw_sql
             if not sql:
@@ -152,7 +179,15 @@ class DataWriter(object):
 
             self.cache_write_data_list.clear()
 
-            logging.info("Finishing inserting Table: %s data num: %d.execute_ret: %s,commit_ret: %s" % (self.tc.get_table_name(),cache_length,execute_ret,commit_ret))
+            extra_string = ""
+
+           
+            if self.stat_time_cost:
+                end = time.time()
+
+                extra_string = end-start
+
+            logging.info("Finishing inserting Table: %s data num: %d.execute_ret: %s,sort: %s. %s" % (self.tc.get_table_name(),cache_length,execute_ret,commit_ret,sort,extra_string))
 
         return ret
 

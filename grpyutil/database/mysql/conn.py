@@ -303,6 +303,20 @@ class TableConn(object):
 
         return self._detail_fields_list
 
+    def read_pk_fields(self):
+        if self._pk_fields_list is None:
+            
+
+            rows, rows_length = self.db_conn_object.query("select COLUMN_NAME from information_schema.STATISTICS  where table_schema =%s and table_name = %s AND INDEX_NAME='PRIMARY' order by SEQ_IN_INDEX ",
+            (self.db_conn_object.sql_config["database"], self.table_name))
+
+            self._pk_fields_list= [] 
+            for row in rows:
+                self._pk_fields_list.append(row[0])
+
+        return self._pk_fields_list
+        
+
     def read_index_fields(self):
         if self._index_fields_dict is not None:
             return self._index_fields_dict
