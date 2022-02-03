@@ -93,7 +93,7 @@ class DataWriter(object):
                 start = time.time()
 
             if self.sort:
-                pkFields = self.tc.read_pk_fields
+                pkFields = self.tc.read_pk_fields()
                 pkIndexList= []
                 for pk in pkFields:
                     index = self.cache_write_field_list.index(pk) # this will raise exception
@@ -139,7 +139,7 @@ class DataWriter(object):
 
             try_times = 1000
             execute_ret = None
-            commit_ret= None
+         
             while(True):
 
                 try:
@@ -147,7 +147,7 @@ class DataWriter(object):
 
                     execute_ret = self.tc.executemany(sql, self.cache_write_data_list)  # ret 0
 
-                    commit_ret = self.tc.commit()  # ret 0
+                    self.tc.commit()  # ret 0
 
                     ret = 1
 
@@ -185,9 +185,9 @@ class DataWriter(object):
             if self.stat_time_cost:
                 end = time.time()
 
-                extra_string = end-start
+                extra_string = "%ss" % (end-start)
 
-            logging.info("Finishing inserting Table: %s data num: %d.execute_ret: %s,sort: %s. %s" % (self.tc.get_table_name(),cache_length,execute_ret,commit_ret,sort,extra_string))
+            logging.info("Finishing inserting Table: %s data num: %d.execute_ret: %s,sort: %s. %s" % (self.tc.get_table_name(),cache_length,execute_ret,self.sort,extra_string))
 
         return ret
 

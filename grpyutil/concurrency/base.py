@@ -3,7 +3,7 @@ import traceback
 import os
 import logging
 import signal
-import queue
+
 from multiprocessing import Process, Queue
 from threading import Thread
 
@@ -116,8 +116,8 @@ class Parallel():
             def bgWriter(extraction_queue:Queue):
 
                 logging.info("distributed extraction bgWriter start")
-                queue_class = queue.Queue
-                thread_class = Thread
+                queue_class = Queue
+                thread_class = Process
 
                 thread_dict={}
 
@@ -147,7 +147,7 @@ class Parallel():
                     
 
                         writerP = thread_class(target=multiThreadConsumer, args=(task,q,))
-                        writerP.daemon = True
+                        writerP.daemon = True 
                         writerP.start()
 
                         thread_dict[distributedKey] = {"queue":q,"thread":writerP}
@@ -161,7 +161,7 @@ class Parallel():
 
         
             p = Process(target=bgWriter, args=(extraction_queue,))
-            p.daemon = True
+            # p.daemon = True daemonic processes are not allowed to have children
             p.start()
         
             return p

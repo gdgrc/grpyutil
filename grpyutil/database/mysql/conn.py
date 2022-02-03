@@ -182,6 +182,7 @@ class TableConn(object):
         self._constraint_fields_list = None
 
         self._index_fields_dict = None
+        self._pk_fields_list =None
 
         self.read_fields()
 
