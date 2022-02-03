@@ -89,8 +89,9 @@ class DataWriter(object):
 
         if cache_length > 0 and (force or cache_length >= self.write_linenum):
             
-
+            sortTime =""
             if self.sort:
+                sort_start_time = time.time()
                 pkFields = self.tc.read_pk_fields()
                 pkIndexList= []
                 for pk in pkFields:
@@ -109,6 +110,8 @@ class DataWriter(object):
                     return pkCmb
 
                 self.cache_write_field_list.sort(key=sortFunc)
+
+                sortTime="%ss" % (time.time() - sort_start_time)
 
             start = None
             if self.stat_time_cost:
@@ -189,7 +192,7 @@ class DataWriter(object):
 
                 extra_string = "%ss" % (end-start)
 
-            logging.info("Finishing inserting Table: %s data num: %d.execute_ret: %s,sort: %s. %s" % (self.tc.get_table_name(),cache_length,execute_ret,self.sort,extra_string))
+            logging.info("Finishing inserting Table: %s data num: %d.execute_ret: %s,sort: %s sortTime: %s. %s" % (self.tc.get_table_name(),cache_length,execute_ret,self.sort,sortTime,extra_string))
 
         return ret
 
