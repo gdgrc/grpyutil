@@ -88,9 +88,7 @@ class DataWriter(object):
         cache_length = len(self.cache_write_data_list)
 
         if cache_length > 0 and (force or cache_length >= self.write_linenum):
-            start = None
-            if self.stat_time_cost:
-                start = time.time()
+            
 
             if self.sort:
                 pkFields = self.tc.read_pk_fields()
@@ -111,6 +109,10 @@ class DataWriter(object):
                     return pkCmb
 
                 self.cache_write_field_list.sort(key=sortFunc)
+
+            start = None
+            if self.stat_time_cost:
+                start = time.time()
  
 
             sql = self.raw_sql
