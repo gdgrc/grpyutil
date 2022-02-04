@@ -104,12 +104,14 @@ class DataWriter(object):
                     raise Exception("no pk key")
 
                 def sortFunc(elem):
+
                     pkCmb = ""
                     for pkIndex in pkIndexList:
                         pkCmb= pkCmb+str(elem[pkIndex])+"&"
+                    # logging.info(pkCmb)
                     return pkCmb
 
-                self.cache_write_field_list.sort(key=sortFunc)
+                self.cache_write_data_list.sort(key=sortFunc)
 
                 sortTime="%ss" % (time.time() - sort_start_time)
 
