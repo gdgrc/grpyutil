@@ -194,6 +194,8 @@ class Parallel():
 
         database_process = goExtractionWriter(self.writeTaskQueue)
 
+        self.writeProcessList = [database_process]
+
         process_list = [database_process]
 
 
