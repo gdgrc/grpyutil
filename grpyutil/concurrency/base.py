@@ -209,7 +209,7 @@ class Parallel():
 
     def endReadProcessAndWait(self):
         # 结束读进程生命
-        for no in range(args.rpn):
+        for no in range(self.readNum):
             self.readTaskQueue.put(EXIT_TASK)
 
         # 等待读进程结束

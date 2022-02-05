@@ -93,6 +93,7 @@ class DataWriter(object):
             if self.sort:
                 sort_start_time = time.time()
                 pkFields = self.tc.read_pk_fields()
+                # logging.info(pkFields)
                 pkIndexList= []
                 for pk in pkFields:
                     index = self.cache_write_field_list.index(pk) # this will raise exception
