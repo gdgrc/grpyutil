@@ -90,8 +90,8 @@ class Parallel():
 
                 
         @deferClean()
-        def multiThreadConsumer(fistTask:Task,queue):
-            logging.info("multiThreadConsumer: "+ str(fistTask.getData()) +" consumer start")
+        def multiThreadConsumer(fistTask:Task,queue,distributedKey):
+            logging.info("multiThreadConsumer: "+ str(fistTask.getData()) +" consumer start. distributedKey: "+ distributedKey)
             
             c = self.consumerClass()
             c.init(fistTask)
@@ -128,6 +128,7 @@ class Parallel():
 
             
                     if task == EXIT_TASK:
+                        logging.info("distributed extraction bgWriter exit. waiting all go routine to exit. %d" % (len(thread_dict)))
                         # 退出所有协程 并等待退出
                         for distributed_key,v in thread_dict.items():
                             v["queue"].put(EXIT_TASK)
@@ -146,7 +147,7 @@ class Parallel():
                         q = queue_class(maxsize=50000)
                     
 
-                        writerP = thread_class(target=multiThreadConsumer, args=(task,q,))
+                        writerP = thread_class(target=multiThreadConsumer, args=(task,q,distributedKey,))
                         writerP.daemon = True 
                         writerP.start()
 
