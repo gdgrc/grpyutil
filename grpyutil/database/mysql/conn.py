@@ -467,12 +467,16 @@ class TableConn(object):
             sql = "SELECT %s FROM `%s` " % (','.join("`%s`" % item.replace('`','``') for item in self._filter_fields), self.table_name)
             args_list = []
 
+            order = ""
             # id begin may be faster
-            if begin_id_index_name and begin_id_index:
-                sql += " WHERE `%s`> " % (begin_id_index_name)
-                sql += " %s "
+            if begin_id_index_name:
+                if begin_id_index:
+                    sql += " WHERE `%s`> " % (begin_id_index_name)
+                    sql += " %s "
 
-                args_list.append(begin_id_index)
+                    args_list.append(begin_id_index)
+
+                order = " order by " + begin_id_index_name
 
             if extra_sql:
                 if "WHERE" in sql:
@@ -480,6 +484,8 @@ class TableConn(object):
                 else:
                     sql += ("WHERE " + extra_sql)
 
+
+            sql = sql + order
             # limit begin
             if read_linenum > 0:
                 sql += " LIMIT "
